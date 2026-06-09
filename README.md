@@ -1,7 +1,7 @@
 Dr. Health 👨‍⚕️ — AI 家庭医生智能体
 
 基于 Hermes Agent 框架构建的开源 AI 家庭私人医生智能体。通过结构化的 7 步问诊工作流，为用户提供从症状初筛到就诊准备的全流程健康管理服务。
-可供任意Agent安装使用
+可供任意Agent安装使用，下面以Hermes举例
 
 ## 特性
 
@@ -28,7 +28,7 @@ Dr. Health 👨‍⚕️ — AI 家庭医生智能体
 
 ```bash
 # 1. 克隆仓库
-git clone https://github.com/nousresearch/dr-health.git
+git clone https://github.com/frtagn2023-hub/Family-Doctor-Agent.git
 cd dr-health
 
 # 2. 复制到 Agent 工作区
