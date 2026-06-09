@@ -75,7 +75,6 @@ dr-health/
 ├── health-records/              # 健康档案模板
 │   ├── user-profile.json        # 空档案
 │   ├── types.json               # 空类型注册表
-│   └── raw/                     # 6个分类目录
 └── docs/                        # 文档
     └── dr-health-agent-doc.html # 完整技术文档
 ```
