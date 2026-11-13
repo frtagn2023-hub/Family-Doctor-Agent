@@ -1,5 +1,8 @@
 {
-  "version": "2.0",
+  "version": "3.0",
+  "onboarding": {
+    "status": "not_started"
+  },
   "lastUpdated": "",
   "owner": {
     "name": "",
@@ -12,6 +15,12 @@
     "chronicConditions": [],
     "medications": [],
     "familyHistory": [],
+    "factStatus": {
+      "allergies": "not_asked",
+      "chronicConditions": "not_asked",
+      "medications": "not_asked",
+      "familyHistory": "not_asked"
+    },
     "emergencyContact": {
       "name": "",
       "relationship": "",

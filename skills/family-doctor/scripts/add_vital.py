@@ -1,130 +1,112 @@
 #!/usr/bin/env python3
-"""
-生命体征记录脚本
-用法:
-  python3 add_vital.py --type blood_pressure --systolic 130 --diastolic 85
-  python3 get_vital_trends.py --type blood_pressure --days 30
-"""
+"""Record owner vital signs with explicit units and separate measurement time.
 
-import json
-import os
-import sys
+Defaults for NEW entries: mmHg, mmol/L, kg, °C, bpm, %. Legacy missing units
+stay unknown. These checks validate data shape, not clinical safety.
+"""
 import argparse
-from datetime import datetime, timedelta
-from pathlib import Path
+import json
+import sys
+import uuid
 
-WORKSPACE = Path.home() / ".hermes" / "health-doc"
-HEALTH_DIR = WORKSPACE / "health-records"
-VITALS_FILE = HEALTH_DIR / "vitals.json"
+from health_store import (VITALS_FILE, ALLOWED_UNITS, DEFAULT_UNITS, VITAL_TYPES,
+                          ensure_self, finite_number, normalize_vitals, now_iso,
+                          parse_time, update_json, attribute_record, refresh_file_views)
 
-def load_vitals():
-    """加载生命体征记录"""
-    if VITALS_FILE.exists():
-        with open(VITALS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {"version": "1.0", "vitals": []}
-
-def save_vitals(data):
-    """保存生命体征记录"""
-    HEALTH_DIR.mkdir(parents=True, exist_ok=True)
-    with open(VITALS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
 
 def add_vital(args):
-    """添加生命体征"""
-    data = load_vitals()
-    
-    vital = {
-        "id": f"vital_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-        "type": args.type,
-        "recorded_at": datetime.now().isoformat(),
-    }
-    
-    if args.type == "blood_pressure":
-        vital["systolic"] = args.systolic
-        vital["diastolic"] = args.diastolic
-        vital["value"] = f"{args.systolic}/{args.diastolic}"
-    elif args.type == "heart_rate":
-        vital["value"] = args.value
-    elif args.type == "temperature":
-        vital["value"] = args.value
-    elif args.type == "blood_sugar":
-        vital["value"] = args.value
-        vital["fasting"] = args.fasting
-    elif args.type == "weight":
-        vital["value"] = args.value
+    if not args.source.strip():
+        raise ValueError("来源不能为空")
+    kind = VITAL_TYPES.get(args.type, args.type)
+    unit = args.unit or DEFAULT_UNITS[kind]
+    unit = {"C": "°C", "F": "°F", "lbs": "lb"}.get(unit, unit)
+    if unit not in ALLOWED_UNITS[kind]:
+        raise ValueError("{} 单位必须为 {}".format(kind, ", ".join(sorted(ALLOWED_UNITS[kind]))))
+    recorded = now_iso()
+    measured = parse_time(args.measured_at).isoformat() if args.measured_at else recorded
+    record = {"id": "vital_" + uuid.uuid4().hex, "type": kind, "unit": unit,
+              "recorded_at": recorded, "measured_at": measured, "notes": args.notes,
+              "source": {"type": "user_report", "reference": args.source.strip()},
+              "confirmation_status": "confirmed" if args.confirmed else "unconfirmed"}
+    if args.confirmed:
+        record.update(confirmed_by="user", confirmed_at=recorded)
+    attribute_record(record, getattr(args, "role", "self"))
+    if kind == "blood_pressure":
+        if args.value is not None:
+            raise ValueError("血压请使用 --systolic 和 --diastolic")
+        systolic = finite_number(args.systolic, "收缩压")
+        diastolic = finite_number(args.diastolic, "舒张压")
+        if systolic < diastolic:
+            raise ValueError("收缩压不能小于舒张压，请核对原始读数")
+        record.update(systolic=systolic, diastolic=diastolic, value="{:g}/{:g}".format(systolic, diastolic))
     else:
-        vital["value"] = args.value
-    
-    vital["notes"] = args.notes or ""
-    
-    data["vitals"].append(vital)
-    save_vitals(data)
-    
-    print(f"✅ 已记录: {args.type} = {vital['value']}")
+        if args.systolic is not None or args.diastolic is not None:
+            raise ValueError("非血压记录请使用 --value")
+        minimum = (-273.15 if unit == "°C" else -459.67) if kind == "temperature" else 0
+        value = finite_number(args.value, "数值", minimum, inclusive=kind == "spo2")
+        if kind == "spo2" and value > 100:
+            raise ValueError("血氧百分比必须在 0–100 之间")
+        record["value"] = value
+    if args.fasting and kind != "blood_sugar":
+        raise ValueError("--fasting 仅适用于血糖")
+    if kind == "blood_sugar":
+        record["context"] = "fasting" if args.fasting else args.context
+        record["fasting"] = record["context"] == "fasting" if record["context"] != "unknown" else None
 
-def get_vital_trends(args):
-    """查看趋势"""
-    data = load_vitals()
-    
-    days = args.days or 30
-    cutoff = (datetime.now() - timedelta(days=days)).isoformat()
-    
-    relevant = [v for v in data["vitals"] 
-                if v["type"] == args.type and v["recorded_at"] >= cutoff]
-    
-    if not relevant:
-        print(f"最近 {days} 天无 {args.type} 记录")
-        return
-    
-    values = []
-    print(f"\n📊 {args.type} 趋势 (最近 {days} 天)\n")
-    
-    for v in sorted(relevant, key=lambda x: x["recorded_at"]):
-        date = v["recorded_at"][:10]
-        val = v.get("value", "")
-        values.append(v.get("systolic", 0) or v.get("value", 0))
-        
-        # 血压显示舒张压
-        if args.type == "blood_pressure":
-            val = f"{v.get('systolic', '')}/{v.get('diastolic', '')}"
-        
-        print(f"  {date} | {val}")
-    
-    if len(values) > 1:
-        avg = sum(values) / len(values)
-        print(f"\n  平均值: {avg:.1f}")
+    def append(data):
+        data = normalize_vitals(data)
+        data["vitals"].append(record)
+        return data
+    update_json(VITALS_FILE, append, {"vitals": []})
+    return record
 
-def main():
-    parser = argparse.ArgumentParser(description="生命体征管理")
-    subparsers = parser.add_subparsers(dest="command", help="子命令")
-    
-    # add
-    add_parser = subparsers.add_parser("add", help="添加体征")
-    add_parser.add_argument("--type", required=True, 
-                          choices=["blood_pressure", "heart_rate", "temperature", "blood_sugar", "weight", "spo2"],
-                          help="体征类型")
-    add_parser.add_argument("--systolic", type=int, help="收缩压")
-    add_parser.add_argument("--diastolic", type=int, help="舒张压")
-    add_parser.add_argument("--value", type=float, help="数值")
-    add_parser.add_argument("--fasting", action="store_true", help="空腹")
-    add_parser.add_argument("--notes", default="", help="备注")
-    
-    # trends
-    trends_parser = subparsers.add_parser("trends", help="查看趋势")
-    trends_parser.add_argument("--type", required=True,
-                             choices=["blood_pressure", "heart_rate", "temperature", "blood_sugar", "weight", "spo2"],
-                             help="体征类型")
-    trends_parser.add_argument("--days", type=int, default=30, help="天数")
-    
-    args = parser.parse_args()
-    
-    if args.command == "add":
-        add_vital(args)
-    elif args.command == "trends":
-        get_vital_trends(args)
-    else:
-        parser.print_help()
+
+def common(parser, suppress=False):
+    parser.add_argument("--role", default=argparse.SUPPRESS if suppress else "self")
+    parser.add_argument("--json", action="store_true", default=argparse.SUPPRESS if suppress else False)
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    if "--type" in argv and not any(word in argv for word in ("add", "trends")):
+        argv.insert(0, "add")
+    parser = argparse.ArgumentParser(description=__doc__)
+    common(parser)
+    commands = parser.add_subparsers(dest="command", required=True)
+    add = commands.add_parser("add")
+    common(add, True)
+    add.add_argument("--type", choices=list(DEFAULT_UNITS) + list(VITAL_TYPES), required=True)
+    add.add_argument("--systolic", type=float)
+    add.add_argument("--diastolic", type=float)
+    add.add_argument("--value", type=float)
+    add.add_argument("--unit", help="新记录默认 mmHg/mmol/L/kg/°C/bpm/%%，可显式覆盖支持的单位")
+    add.add_argument("--measured-at", help="实际测量时间，ISO 8601；省略则用记录时间")
+    add.add_argument("--fasting", action="store_true")
+    add.add_argument("--context", choices=["fasting", "after_meal", "random", "unknown"], default="unknown")
+    add.add_argument("--notes", default="")
+    add.add_argument("--source", default="用户自述/手动录入", help="资料来源说明")
+    add.add_argument("--confirmed", action="store_true", help="用户已核对记录；不代表医生确认")
+    trends = commands.add_parser("trends")
+    common(trends, True)
+    trends.add_argument("--type", choices=list(DEFAULT_UNITS) + list(VITAL_TYPES) + ["all"], default="all")
+    trends.add_argument("--days", type=int, default=30)
+    args = parser.parse_args(argv)
+    try:
+        ensure_self(args.role)
+        if args.command == "trends":
+            from get_vital_trends import build_report, print_report
+            result = build_report(args.type, args.days)
+            print(json.dumps(result, ensure_ascii=False, indent=2)) if args.json else print_report(result)
+        else:
+            result = add_vital(args)
+            refresh_file_views(include_episodes=False)
+            if args.json:
+                print(json.dumps(result, ensure_ascii=False, indent=2))
+            else:
+                print("已记录: {} = {} {}；测量时间 {}".format(result["type"], result["value"], result["unit"], result["measured_at"]))
+    except (ValueError, PermissionError, OSError) as exc:
+        parser.exit(2, "错误: {}\n".format(exc))
+
 
 if __name__ == "__main__":
     main()

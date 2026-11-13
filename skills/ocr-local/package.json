@@ -4,15 +4,17 @@
   "description": "OCR skill for extracting text from images using Tesseract.js. Supports Chinese (simplified/traditional) and English.",
   "main": "scripts/ocr.js",
   "scripts": {
-    "test": "node scripts/ocr.js --help"
+    "test": "node --test tests/*.test.js"
   },
   "keywords": ["ocr", "image", "text-recognition", "tesseract", "chinese", "image-to-text"],
   "author": "OpenClaw Community",
   "license": "MIT",
   "acceptLicenseTerms": true,
   "dependencies": {
-    "tesseract.js": "^7.0.0"
+    "tesseract.js": "7.0.0"
   },
+  "engines": { "node": ">=18" },
+  "overrides": { "wasm-feature-detect": "1.8.0" },
   "repository": {
     "type": "git",
     "url": "https://github.com/openclaw/skill-ocr.git"

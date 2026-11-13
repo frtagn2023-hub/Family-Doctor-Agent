@@ -1,0 +1,21 @@
+# Personal health data, exports, snapshots and host memory must not enter Git.
+/health-records/
+**/health-records/
+/family.json
+/family.json.lock
+/catalog.md
+/members/
+/cognition/
+/.backups/
+/memory/
+/MEMORY.md
+/.local/
+/.env
+/.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+node_modules/
+*.traineddata
+*.traineddata.gz
+.DS_Store

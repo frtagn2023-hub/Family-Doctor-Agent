@@ -1,72 +1,12 @@
-# TOOLS.md - 本地工具配置
+# 工具与数据位置
 
-## 技能工具
+工具清单及使用边界见 `skills/family-doctor/SKILL.md`；唯一问诊流程见 `WORKFLOW.md`。
 
-本健康助手使用的技能和工具：
-
-### 核心技能
-
-| 技能 | 用途 |
-|-----|------|
-| family-doctor | 7步问诊工作流、诊断建议、药物调整 |
-| cn-web-search | 中文网页搜索（Wikipedia 等） |
-| knowledge-graph | 知识图谱管理 |
-| pdf-text-extract | PDF 文本提取 |
-| ocr-local | 本地 OCR（图片转文字） |
-
-### 工具使用
-
-| 场景 | 工具 |
-|-----|------|
-| PDF 附件 | pdf-text-extract |
-| 图片附件 | ocr-local |
-| 医学知识查询 | web_fetch (Wikipedia) |
-| 健康档案 | health-records/user-profile.json |
-
----
-
-## 问诊脚本
-
-位置：`skills/family-doctor/scripts/`
-
-| 脚本 | 功能 |
-|-----|------|
-| welcome.py | 首次使用引导（收集基本信息） |
-| add_symptom.py | 记录症状 |
-| add_medication.py | 添加药物 |
-| add_vital.py | 记录生命体征 |
-| add_consultation.py | 创建问诊记录 |
-| list_medications.py | 列出当前用药 |
-| check_interactions.py | 检查药物相互作用 |
-| get_vital_trends.py | 查看体征趋势 |
-| generate_health_report.py | 生成就诊报告 |
-| generate_emergency_card.py | 生成急诊健康卡 |
-
----
-
-## 健康档案目录
-
-```
-health-records/
-├── user-profile.json    # 健康档案汇总
-├── types.json           # 文件类型注册
-├── daily/               # 每日健康数据
-├── reports/             # 健康报告
-├── consultations/      # 问诊记录
-└── ...原始健康文件
-```
-
----
-
-## 工作流配置
-
-| 文件 | 用途 |
-|-----|------|
-| WORKFLOW.md | 7步问诊工作流 |
-| HEALTH-MANAGEMENT.md | 动态文件管理系统 |
-| SOUL.md | 角色定义 |
-| AGENTS.md | 工作区配置+医疗红线 |
-
----
-
-*本文件记录健康助手使用的工具和配置信息*
+- Python 核心管理脚本仅依赖标准库。
+- `web_server.py` 只提供本机认知观察统计、Web 复核提示和结构化导入。`cognition.py validate/import` 的 JSON/CSV 格式不接收原文；预览、去重和整批保存见 `docs/web-dashboard.md`。
+- `cognition.py chat-prepare/chat-record/chat-stats` 接收 stdin JSON，由 Hermes 当前模型完成九维分析；本地内存核验原句，去原文结果写入独立聊天观察库。可选 `integrations/hermes/family-doctor-cognition/` 注册回合 hook 与两个受限工具，有限缓存启用后的当前对话，不读取历史库、不另调模型。详见 `docs/chat-analysis.md`。认知提醒仅 Web，禁止飞书主动风险通知；实际急症回应仍有效。
+- `file_manager` 提供统一文件目录、实际日期检索、文档与事件关联、归档恢复和按事件导出；`family.py files --rebuild` 生成按姓名的家庭总览。原始健康事实与文件显示状态分开。
+- PDF 文本提取、OCR、PDF 报告生成是可选功能，依赖与自检见 `INSTALL.md`。
+- 医学检索需要宿主提供网页搜索/读取工具，遵循 `skills/cn-web-search/SKILL.md`。
+- 本仓库没有 LLM 服务、聊天界面、后台调度器或完整药学数据库。
+- 家庭模式配置共享 `FAMILY_DOCTOR_FAMILY_HOME`，通过 `family.py run` 为每次调用选择成员级 `FAMILY_DOCTOR_HOME`；不合并 Hermes profile。个人模式仍使用 FAMILY_DOCTOR_HOME。真实资料不进入仓库模板。

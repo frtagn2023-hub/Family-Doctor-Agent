@@ -1,0 +1,1712 @@
+{
+  "meta": {
+    "familyName": "家安示例家庭",
+    "generatedAt": "2026-11-13T02:49:57.504608+00:00",
+    "windowDays": 30,
+    "windowStart": "2026-10-15",
+    "windowEnd": "2026-11-13",
+    "modelEnabled": false,
+    "mode": "demo",
+    "analysisMode": "hermes_structured",
+    "clinicalValidation": false,
+    "reminderChannel": "web",
+    "chatAnalysisEnabled": true,
+    "notificationsEnabled": false
+  },
+  "members": [
+    {
+      "id": "m_11111111111111111111111111111111",
+      "name": "王建国",
+      "status": "needs_review",
+      "label": "待核实变化",
+      "validSamples": 11,
+      "eventCount": 10,
+      "signalCount": 4,
+      "languageSamples": 10,
+      "qualityCounts": {
+        "usable": 11,
+        "limited": 0,
+        "excluded": 0
+      },
+      "sourceCounts": {
+        "self_expression": 10,
+        "caregiver_observation": 1,
+        "clinician_record": 0
+      },
+      "lastObservedAt": "2026-11-11T16:00:00+00:00",
+      "trend": [
+        {
+          "date": "2026-10-15",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-16",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-17",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-18",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-19",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-20",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-21",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-22",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-23",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-24",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-25",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-26",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-27",
+          "observations": 1,
+          "signals": 1
+        },
+        {
+          "date": "2026-10-28",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-29",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-30",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-31",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-01",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-02",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-03",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-04",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-05",
+          "observations": 1,
+          "signals": 1
+        },
+        {
+          "date": "2026-11-06",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-07",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-08",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-09",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-10",
+          "observations": 1,
+          "signals": 1
+        },
+        {
+          "date": "2026-11-11",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-12",
+          "observations": 1,
+          "signals": 1
+        },
+        {
+          "date": "2026-11-13",
+          "observations": 0,
+          "signals": 0
+        }
+      ],
+      "domains": [
+        {
+          "key": "repeated_question",
+          "label": "重复提问",
+          "count": 4
+        },
+        {
+          "key": "disorientation",
+          "label": "时间地点混淆",
+          "count": 0
+        },
+        {
+          "key": "topic_discontinuity",
+          "label": "话题衔接变化",
+          "count": 0
+        },
+        {
+          "key": "word_finding",
+          "label": "找词困难",
+          "count": 0
+        },
+        {
+          "key": "daily_function_change",
+          "label": "日常能力变化",
+          "count": 0
+        }
+      ],
+      "chatAnalysis": {
+        "status": "review",
+        "label": "建议家属复核",
+        "lastAnalyzedAt": "2026-11-13T02:49:57.524607+00:00",
+        "self": {
+          "windowCount": 5,
+          "observationDays": 5,
+          "opportunities": 5,
+          "signalDays": 3
+        },
+        "caregiver": {
+          "windowCount": 2,
+          "observationDays": 2,
+          "opportunities": 2,
+          "signalDays": 2
+        },
+        "quality": {
+          "usable": 7,
+          "limited": 0,
+          "excluded": 0
+        },
+        "dimensions": [
+          {
+            "key": "memory_repetition",
+            "label": "重复提问",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "context_memory",
+            "label": "上下文记忆",
+            "status": "possible_signal",
+            "opportunities": 3,
+            "signalCount": 3,
+            "signalDays": 3,
+            "caregiverSignalDays": 2,
+            "reference": {
+              "available": true,
+              "days": 6,
+              "opportunities": 6,
+              "signalCount": 0,
+              "comparison": "more_signals"
+            }
+          },
+          {
+            "key": "comprehension",
+            "label": "理解回应",
+            "status": "no_signal",
+            "opportunities": 2,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "coherence",
+            "label": "话题连贯",
+            "status": "no_signal",
+            "opportunities": 2,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "temporal_order",
+            "label": "时间顺序",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "word_finding",
+            "label": "找词表达",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "orientation",
+            "label": "时间地点定向",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "planning",
+            "label": "计划组织",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "daily_function",
+            "label": "日常功能",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          }
+        ],
+        "trend": [
+          {
+            "date": "2026-10-15",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-16",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-17",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-18",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-19",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-20",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-21",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-22",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-23",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-24",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-25",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-26",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-27",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-28",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-29",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-30",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-31",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-01",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-02",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-03",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-04",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-05",
+            "opportunities": 1,
+            "selfSignals": 1,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-06",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-07",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 1
+          },
+          {
+            "date": "2026-11-08",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-09",
+            "opportunities": 1,
+            "selfSignals": 1,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-10",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-11",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 1
+          },
+          {
+            "date": "2026-11-12",
+            "opportunities": 1,
+            "selfSignals": 1,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-13",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          }
+        ],
+        "alerts": [
+          {
+            "level": "review",
+            "code": "repeated_self_signal",
+            "label": "本人表达在多个独立日期出现同类线索",
+            "domain": "context_memory",
+            "sourceMode": "self",
+            "days": 3,
+            "firstSeen": "2026-11-05",
+            "lastSeen": "2026-11-12"
+          },
+          {
+            "level": "info",
+            "code": "single_signal",
+            "label": "单次线索，继续观察",
+            "domain": "context_memory",
+            "sourceMode": "caregiver",
+            "days": 2,
+            "firstSeen": "2026-11-07",
+            "lastSeen": "2026-11-11"
+          }
+        ],
+        "clinicalValidation": false
+      }
+    },
+    {
+      "id": "m_22222222222222222222222222222222",
+      "name": "林秀兰",
+      "status": "recorded",
+      "label": "已记录观察",
+      "validSamples": 5,
+      "eventCount": 5,
+      "signalCount": 0,
+      "languageSamples": 5,
+      "qualityCounts": {
+        "usable": 5,
+        "limited": 0,
+        "excluded": 0
+      },
+      "sourceCounts": {
+        "self_expression": 5,
+        "caregiver_observation": 0,
+        "clinician_record": 0
+      },
+      "lastObservedAt": "2026-11-10T16:00:00+00:00",
+      "trend": [
+        {
+          "date": "2026-10-15",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-16",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-17",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-18",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-19",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-20",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-21",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-22",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-23",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-24",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-25",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-26",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-27",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-28",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-29",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-30",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-31",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-01",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-02",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-03",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-04",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-05",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-06",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-07",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-08",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-09",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-10",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-11",
+          "observations": 1,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-12",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-13",
+          "observations": 0,
+          "signals": 0
+        }
+      ],
+      "domains": [
+        {
+          "key": "repeated_question",
+          "label": "重复提问",
+          "count": 0
+        },
+        {
+          "key": "disorientation",
+          "label": "时间地点混淆",
+          "count": 0
+        },
+        {
+          "key": "topic_discontinuity",
+          "label": "话题衔接变化",
+          "count": 0
+        },
+        {
+          "key": "word_finding",
+          "label": "找词困难",
+          "count": 0
+        },
+        {
+          "key": "daily_function_change",
+          "label": "日常能力变化",
+          "count": 0
+        }
+      ],
+      "chatAnalysis": {
+        "status": "observing",
+        "label": "持续观察",
+        "lastAnalyzedAt": "2026-11-13T02:49:57.534477+00:00",
+        "self": {
+          "windowCount": 4,
+          "observationDays": 4,
+          "opportunities": 4,
+          "signalDays": 0
+        },
+        "caregiver": {
+          "windowCount": 0,
+          "observationDays": 0,
+          "opportunities": 0,
+          "signalDays": 0
+        },
+        "quality": {
+          "usable": 4,
+          "limited": 1,
+          "excluded": 0
+        },
+        "dimensions": [
+          {
+            "key": "memory_repetition",
+            "label": "重复提问",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "context_memory",
+            "label": "上下文记忆",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "comprehension",
+            "label": "理解回应",
+            "status": "no_signal",
+            "opportunities": 4,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "coherence",
+            "label": "话题连贯",
+            "status": "no_signal",
+            "opportunities": 4,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "temporal_order",
+            "label": "时间顺序",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "word_finding",
+            "label": "找词表达",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "orientation",
+            "label": "时间地点定向",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "planning",
+            "label": "计划组织",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "daily_function",
+            "label": "日常功能",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          }
+        ],
+        "trend": [
+          {
+            "date": "2026-10-15",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-16",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-17",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-18",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-19",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-20",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-21",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-22",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-23",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-24",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-25",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-26",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-27",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-28",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-29",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-30",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-31",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-01",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-02",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-03",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-04",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-05",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-06",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-07",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-08",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-09",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-10",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-11",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-12",
+            "opportunities": 1,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-13",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          }
+        ],
+        "alerts": [],
+        "clinicalValidation": false
+      }
+    },
+    {
+      "id": "m_33333333333333333333333333333333",
+      "name": "王晨",
+      "status": "not_assessed",
+      "label": "尚未评估",
+      "validSamples": 0,
+      "eventCount": 0,
+      "signalCount": 0,
+      "languageSamples": 0,
+      "qualityCounts": {
+        "usable": 0,
+        "limited": 0,
+        "excluded": 0
+      },
+      "sourceCounts": {
+        "self_expression": 0,
+        "caregiver_observation": 0,
+        "clinician_record": 0
+      },
+      "lastObservedAt": null,
+      "trend": [
+        {
+          "date": "2026-10-15",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-16",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-17",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-18",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-19",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-20",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-21",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-22",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-23",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-24",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-25",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-26",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-27",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-28",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-29",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-30",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-10-31",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-01",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-02",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-03",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-04",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-05",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-06",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-07",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-08",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-09",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-10",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-11",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-12",
+          "observations": 0,
+          "signals": 0
+        },
+        {
+          "date": "2026-11-13",
+          "observations": 0,
+          "signals": 0
+        }
+      ],
+      "domains": [
+        {
+          "key": "repeated_question",
+          "label": "重复提问",
+          "count": 0
+        },
+        {
+          "key": "disorientation",
+          "label": "时间地点混淆",
+          "count": 0
+        },
+        {
+          "key": "topic_discontinuity",
+          "label": "话题衔接变化",
+          "count": 0
+        },
+        {
+          "key": "word_finding",
+          "label": "找词困难",
+          "count": 0
+        },
+        {
+          "key": "daily_function_change",
+          "label": "日常能力变化",
+          "count": 0
+        }
+      ],
+      "chatAnalysis": {
+        "status": "insufficient",
+        "label": "观察资料不足",
+        "lastAnalyzedAt": null,
+        "self": {
+          "windowCount": 0,
+          "observationDays": 0,
+          "opportunities": 0,
+          "signalDays": 0
+        },
+        "caregiver": {
+          "windowCount": 0,
+          "observationDays": 0,
+          "opportunities": 0,
+          "signalDays": 0
+        },
+        "quality": {
+          "usable": 0,
+          "limited": 0,
+          "excluded": 0
+        },
+        "dimensions": [
+          {
+            "key": "memory_repetition",
+            "label": "重复提问",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "context_memory",
+            "label": "上下文记忆",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "comprehension",
+            "label": "理解回应",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "coherence",
+            "label": "话题连贯",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "temporal_order",
+            "label": "时间顺序",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "word_finding",
+            "label": "找词表达",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "orientation",
+            "label": "时间地点定向",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "planning",
+            "label": "计划组织",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          },
+          {
+            "key": "daily_function",
+            "label": "日常功能",
+            "status": "not_assessable",
+            "opportunities": 0,
+            "signalCount": 0,
+            "signalDays": 0,
+            "caregiverSignalDays": 0,
+            "reference": {
+              "available": false,
+              "days": 0,
+              "opportunities": 0,
+              "signalCount": 0,
+              "comparison": "unavailable"
+            }
+          }
+        ],
+        "trend": [
+          {
+            "date": "2026-10-15",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-16",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-17",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-18",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-19",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-20",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-21",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-22",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-23",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-24",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-25",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-26",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-27",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-28",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-29",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-30",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-10-31",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-01",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-02",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-03",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-04",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-05",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-06",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-07",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-08",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-09",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-10",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-11",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-12",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          },
+          {
+            "date": "2026-11-13",
+            "opportunities": 0,
+            "selfSignals": 0,
+            "caregiverSignals": 0
+          }
+        ],
+        "alerts": [],
+        "clinicalValidation": false
+      }
+    }
+  ],
+  "revision": 1,
+  "imports": [
+    {
+      "id": "import_c2b1806245944163a79d262c33a66377",
+      "importedAt": "2026-11-11T07:09:04.520486+00:00",
+      "new": 16,
+      "duplicates": 0
+    }
+  ],
+  "totals": {
+    "members": 3,
+    "needsReview": 1,
+    "notAssessed": 1,
+    "validSamples": 16,
+    "eventCount": 15,
+    "signalCount": 4
+  }
+}

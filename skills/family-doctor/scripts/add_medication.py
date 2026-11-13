@@ -1,142 +1,142 @@
 #!/usr/bin/env python3
-"""
-药物管理脚本
-用法: 
-  python3 add_medication.py --name "厄贝沙坦" --dose "150mg" --freq "qd"
-  python3 list_medications.py
-  python3 check_interactions.py
-"""
-
-import json
-import os
-import sys
+"""Owner-only medication ledger. Names/doses are user records, not prescriptions."""
 import argparse
-from datetime import datetime
-from pathlib import Path
+import json
+import sys
+import uuid
+from datetime import date
 
-WORKSPACE = Path.home() / ".hermes" / "health-doc"
-HEALTH_DIR = WORKSPACE / "health-records"
-MEDICATIONS_FILE = HEALTH_DIR / "medications.json"
+from health_store import (MEDICATIONS_FILE, ensure_self, load_json, normalize_medications,
+                          now_iso, update_json, attribute_record, record_context, refresh_file_views)
 
-# 常见药物相互作用（简化版）
-DRUG_INTERACTIONS = {
-    ("阿司匹林", "华法林"): "增加出血风险",
-    ("阿司匹林", "布洛芬"): "降低阿司匹林心脏保护作用",
-    ("厄贝沙坦", "钾补充剂"): "可能引起高钾血症",
-    ("地平类", "地尔硫卓"): "可能引起低血压",
-    ("他汀类", "红霉素"): "增加肌病风险",
-    (" Metformin", "酒精"): "增加乳酸酸中毒风险"
-}
 
 def load_medications():
-    """加载药物记录"""
-    if MEDICATIONS_FILE.exists():
-        with open(MEDICATIONS_FILE, 'r', encoding='utf-8') as f:
-            return json.load(f)
-    return {"version": "1.0", "medications": []}
+    return normalize_medications(load_json(MEDICATIONS_FILE, {"medications": []}))
 
-def save_medications(data):
-    """保存药物记录"""
-    HEALTH_DIR.mkdir(parents=True, exist_ok=True)
-    with open(MEDICATIONS_FILE, 'w', encoding='utf-8') as f:
-        json.dump(data, f, ensure_ascii=False, indent=2)
 
 def add_medication(args):
-    """添加药物"""
-    data = load_medications()
-    
-    med = {
-        "id": f"med_{datetime.now().strftime('%Y%m%d%H%M%S')}",
-        "name": args.name,
-        "dose": args.dose,
-        "frequency": args.freq,
-        "purpose": args.purpose,
-        "start_date": args.start_date or datetime.now().strftime("%Y-%m-%d"),
-        "prescribed_by": args.prescriber,
-        "notes": args.notes,
-        "recorded_at": datetime.now().isoformat()
-    }
-    
-    data["medications"].append(med)
-    save_medications(data)
-    
-    print(f"✅ 已添加药物: {args.name} {args.dose} {args.freq}")
+    name, dose, frequency = args.name.strip(), args.dose.strip(), args.freq.strip()
+    if not all((name, dose, frequency)):
+        raise ValueError("药名、剂量和频率不能为空")
+    if not args.source.strip():
+        raise ValueError("来源不能为空")
+    start = args.start_date or date.today().isoformat()
+    try:
+        date.fromisoformat(start)
+    except ValueError as exc:
+        raise ValueError("开始日期格式必须为 YYYY-MM-DD") from exc
+    record = {"id": "med_" + uuid.uuid4().hex, "name": name, "dose": dose,
+              "frequency": frequency, "status": "active", "purpose": args.purpose,
+              "start_date": start, "prescribed_by": args.prescriber,
+              "notes": args.notes, "recorded_at": now_iso(),
+              "source": {"type": "user_report", "reference": args.source.strip()},
+              "confirmation_status": "confirmed" if args.confirmed else "unconfirmed"}
+    if args.confirmed:
+        record.update(confirmed_by="user", confirmed_at=record["recorded_at"])
+    attribute_record(record, getattr(args, "role", "self"))
 
-def list_medications(args):
-    """列出药物"""
-    data = load_medications()
-    
-    if not data["medications"]:
-        print("暂无药物记录")
-        return
-    
-    active = [m for m in data["medications"] if m.get("status") != "停用"]
-    
-    print(f"\n💊 当前用药 (共 {len(active)} 种)\n")
-    for m in active:
-        print(f"  • {m['name']} {m['dose']} {m['frequency']}")
-        if m.get('purpose'):
-            print(f"    用途: {m['purpose']}")
-        if m.get('prescribed_by'):
-            print(f"    开药: {m['prescribed_by']}")
-        print()
+    def append(data):
+        data = normalize_medications(data)
+        data["medications"].append(record)
+        return data
+    update_json(MEDICATIONS_FILE, append, {"medications": []})
+    return record
 
-def check_interactions(args):
-    """检查药物相互作用"""
-    data = load_medications()
-    meds = [m["name"] for m in data["medications"] if m.get("status") != "停用"]
-    
-    if len(meds) < 2:
-        print("当前药物少于2种，无需检查相互作用")
-        return
-    
-    print("\n🔍 药物相互作用检查\n")
-    
-    found = False
-    for i, med1 in enumerate(meds):
-        for med2 in meds[i+1:]:
-            for (d1, d2), interaction in DRUG_INTERACTIONS.items():
-                if (d1 in med1 and d2 in med2) or (d2 in med1 and d1 in med2):
-                    print(f"  ⚠️ {med1} + {med2}")
-                    print(f"     {interaction}")
-                    print()
-                    found = True
-    
-    if not found:
-        print("  ✅ 未发现已知相互作用")
-    
-    print("\n⚠️ 建议：用药调整前请咨询医生或药师")
 
-def main():
-    parser = argparse.ArgumentParser(description="药物管理")
-    subparsers = parser.add_subparsers(dest="command", help="子命令")
-    
-    # add
-    add_parser = subparsers.add_parser("add", help="添加药物")
-    add_parser.add_argument("--name", required=True, help="药物名称")
-    add_parser.add_argument("--dose", required=True, help="剂量")
-    add_parser.add_argument("--freq", required=True, help="频率 (如 qd, bid)")
-    add_parser.add_argument("--purpose", default="", help="用途")
-    add_parser.add_argument("--start-date", help="开始日期")
-    add_parser.add_argument("--prescriber", default="", help="开药医生")
-    add_parser.add_argument("--notes", default="", help="备注")
-    
-    # list
-    subparsers.add_parser("list", help="列出药物")
-    
-    # check
-    subparsers.add_parser("check", help="检查相互作用")
-    
-    args = parser.parse_args()
-    
-    if args.command == "add":
-        add_medication(args)
-    elif args.command == "list":
-        list_medications(args)
-    elif args.command == "check":
-        check_interactions(args)
-    else:
-        parser.print_help()
+def set_status(args):
+    selected = {}
+
+    def change(data):
+        data = normalize_medications(data)
+        matches = [m for m in data["medications"] if
+                   (args.id and m.get("id") == args.id) or
+                   (args.name and m["name"] == args.name)]
+        if len(matches) != 1:
+            raise ValueError("必须唯一匹配一条药物记录；请使用记录 ID（当前匹配 {} 条）".format(len(matches)))
+        med = matches[0]
+        med.setdefault("id", "med_" + uuid.uuid4().hex)
+        med["status"] = "stopped" if args.command == "stop" else args.status
+        med["status_updated_at"] = now_iso()
+        context = record_context(getattr(args, "role", "self"))
+        if context:
+            med.setdefault("status_history", []).append(dict(context, status=med["status"], recorded_at=med["status_updated_at"]))
+        selected.update(med)
+        return data
+    update_json(MEDICATIONS_FILE, change, {"medications": []})
+    return selected
+
+
+def add_common(parser, suppress=False):
+    parser.add_argument("--role", default=argparse.SUPPRESS if suppress else "self", help="仅 self/本人可访问档案；代问会被拒绝")
+    parser.add_argument("--json", action="store_true", default=argparse.SUPPRESS if suppress else False, help="输出 JSON")
+
+
+def build_parser():
+    parser = argparse.ArgumentParser(description="本人药物记录；停用仅改变档案状态，不是医疗用药建议")
+    add_common(parser)
+    commands = parser.add_subparsers(dest="command", required=True)
+    add = commands.add_parser("add", help="记录本人用药")
+    add_common(add, True)
+    add.add_argument("--name", required=True)
+    add.add_argument("--dose", "--dosage", required=True)
+    add.add_argument("--freq", "--frequency", required=True)
+    add.add_argument("--purpose", default="")
+    add.add_argument("--start-date")
+    add.add_argument("--prescriber", default="")
+    add.add_argument("--notes", default="")
+    add.add_argument("--source", default="用户自述/手动录入", help="资料来源说明")
+    add.add_argument("--confirmed", action="store_true", help="用户已核对记录；不代表医生确认")
+    listing = commands.add_parser("list", help="查看用药")
+    add_common(listing, True)
+    listing.add_argument("--all", action="store_true", help="包含已停用记录")
+    checking = commands.add_parser("check", help="有限演示规则的相互作用检查")
+    add_common(checking, True)
+    for command in ("stop", "status"):
+        sub = commands.add_parser(command, help="更新记录状态，不能代替医生决定")
+        add_common(sub, True)
+        selector = sub.add_mutually_exclusive_group(required=True)
+        selector.add_argument("--id")
+        selector.add_argument("--name", help="精确药名；重名时改用 ID")
+        if command == "status":
+            sub.add_argument("--status", choices=["active", "stopped"], required=True)
+    return parser
+
+
+def main(argv=None):
+    argv = list(sys.argv[1:] if argv is None else argv)
+    # Preserve the original documented no-subcommand add invocation.
+    if "--name" in argv and not any(word in argv for word in ("add", "list", "check", "stop", "status")):
+        argv.insert(0, "add")
+    parser = build_parser()
+    args = parser.parse_args(argv)
+    try:
+        ensure_self(args.role)
+        if args.command == "add":
+            result = add_medication(args)
+        elif args.command in {"stop", "status"}:
+            result = set_status(args)
+        elif args.command == "check":
+            from check_interactions import evaluate_current
+            result = evaluate_current(load_medications()["medications"])
+        else:
+            result = [m for m in load_medications()["medications"] if args.all or m["status"] == "active"]
+        if args.command in {"add", "stop", "status"}:
+            refresh_file_views(include_episodes=False)
+        if args.json:
+            print(json.dumps(result, ensure_ascii=False, indent=2))
+        elif args.command == "check":
+            from check_interactions import print_result
+            print_result(result)
+        elif args.command == "list":
+            if not result:
+                print("暂无符合条件的药物记录")
+            for med in result:
+                print("{} | {} {} {} | {}".format(med.get("id", "旧记录（可按药名操作）"), med["name"], med["dose"], med["frequency"], med["status"]))
+        else:
+            print("已保存记录: {} | {} | {}".format(result["id"], result["name"], result["status"]))
+    except (ValueError, PermissionError, OSError) as exc:
+        parser.exit(2, "错误: {}\n".format(exc))
+
 
 if __name__ == "__main__":
     main()
