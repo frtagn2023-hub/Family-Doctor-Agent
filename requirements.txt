@@ -1,3 +1,5 @@
 # Optional file import/export features; core health scripts need only Python stdlib.
 pypdf==6.20.0
 weasyprint==66.0
+# Explicit image preparation dependency; pip selects a release compatible with Python.
+Pillow>=9.1.0

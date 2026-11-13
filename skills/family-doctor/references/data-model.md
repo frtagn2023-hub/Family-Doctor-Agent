@@ -24,7 +24,9 @@ owner 的 allergies、chronicConditions、familyHistory 是事实列表；factSt
 
 ## 附件提取与待核对字段
 
-PDF/OCR 的 JSON 输出包含 source.sha256 和 pages（page_number/text/status/extraction_method）。每一页都有来源；status=ok 仅表示文字提取完整，不表示内容或医学解释正确。
+PDF/OCR 的 JSON 输出包含 source.sha256 和 pages（page_number/text/status/extraction_method）。`status=ok` 只表示提取器在所处理的各页读出了文字，不证明覆盖整页、全部指标或医学解释正确；页眉有字而表格未读取的情况仍需识别和核对。
+
+扫描件/图片优先当前模型直接查看，具体路由见[附件识别规范](attachment-recognition.md)。`pdf-text-extract/visual.py prepare` 计算原文件哈希、真实页数并生成页面清单；模型只填写各页文字、status和issues，再由 `assemble` 生成同一入档协议。模型页固定 `extraction_method=model_vision`、`confidence=null`，带 `issues`，顶层含真实 `page_count`。模型报告的问题未解决时保持非ok，不编造OCR置信度；stage和confirm对model_vision再次核对原件真实页数。真实页数校验能拦截漏页，不能证明文字语义无误或整份医学资料无遗漏。
 
 `manage_records.py stage` 的 `--fields-json` 接收以下数组。数值必须用 JSON 数值并提供单位；原文必须出现在对应页，日期使用 YYYY-MM-DD。
 

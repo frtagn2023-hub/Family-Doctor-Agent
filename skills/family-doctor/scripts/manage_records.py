@@ -3,7 +3,9 @@
 import argparse
 import copy
 from datetime import date
+from functools import lru_cache
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -17,12 +19,14 @@ from health_store import (HEALTH_DIR, USER_PROFILE, atomic_write_json, ensure_se
                           load_json, now_iso, update_json, attribute_record, record_context, _lock, refresh_file_views)
 
 MAX_BYTES = 50 * 1024 * 1024
+MAX_MODEL_PAGES = 50
+MODEL_METADATA_KEYS = ("extraction_method", "extraction_tool", "extraction_schema_version", "coverage_basis", "extraction_warnings")
 DOCUMENT_TYPES = {"体检报告", "检验结果", "处方", "影像报告", "病历", "其他"}
 PROVENANCE_KEYS = ("subject_member_id", "subject_name", "reporter_member_id", "reporter_name",
                    "reporter_profile", "report_mode", "identity_basis", "observed_actor_id",
                    "observed_user_id", "observed_message_id", "observed_platform")
 SOURCE_METADATA_KEYS = ("original_name", "document_type", "title", "document_date", "imported_at",
-                        "reviewed_at", "reviewed_by", "request_key", "content_fingerprint") + PROVENANCE_KEYS
+                        "reviewed_at", "reviewed_by", "request_key", "content_fingerprint") + PROVENANCE_KEYS + MODEL_METADATA_KEYS
 
 
 def document_metadata(title=None, document_date=None):
@@ -70,6 +74,81 @@ def validate_pages(pages, page_count=None, complete=False):
     return pages
 
 
+@lru_cache(maxsize=1)
+def visual_inspector():
+    """Use the installed adapter beside this skill, independent of the checkout."""
+    path = Path(__file__).resolve().parents[2] / "pdf-text-extract" / "visual.py"
+    spec = importlib.util.spec_from_file_location("family_doctor_visual_source", path)
+    if spec is None or spec.loader is None:
+        raise ValueError("视觉转录校验器不可用，请检查完整安装")
+    module = importlib.util.module_from_spec(spec)
+    try:
+        spec.loader.exec_module(module)
+    except ImportError as exc:
+        raise ValueError("视觉转录校验器依赖不可用，请检查安装") from exc
+    return module.inspect_source
+
+
+def has_model_vision(value):
+    pages = value.get("pages", value.get("source_pages", []))
+    return (value.get("extraction_method") == "model_vision"
+            or value.get("tool", value.get("extraction_tool")) == "family-doctor-model-vision"
+            or value.get("coverage_basis") == "local_manifest"
+            or (isinstance(pages, list) and any(isinstance(page, dict)
+                and page.get("extraction_method") == "model_vision" for page in pages)))
+
+
+def string_list(value):
+    return isinstance(value, list) and all(isinstance(item, str) for item in value)
+
+
+def validate_model_pages(pages, page_count, status, actual_count=None, complete=False):
+    """Check declared completeness, not transcription accuracy or who supplied it."""
+    validate_pages(pages, page_count)
+    if (type(page_count) is not int or not 1 <= page_count <= MAX_MODEL_PAGES
+            or (actual_count is not None and page_count != actual_count)
+            or sorted(page["page_number"] for page in pages) != list(range(1, page_count + 1))):
+        raise ValueError("视觉转录页数必须与原文件一致，且逐页覆盖全部真实页码")
+    if status not in {"ok", "partial", "empty", "error"}:
+        raise ValueError("视觉转录整体状态缺失或无效")
+    for page in pages:
+        if (page.get("extraction_method") != "model_vision"
+                or page.get("status") not in {"ok", "partial", "empty", "error"}
+                or "confidence" not in page or page["confidence"] is not None
+                or not string_list(page.get("issues")) or not string_list(page.get("warnings"))):
+            raise ValueError("视觉转录每页必须保留 method、状态、null confidence、issues 和 warnings")
+        if page["status"] == "ok" and (not page["text"].strip() or page["issues"]):
+            raise ValueError("视觉转录的 ok 页面必须有非空原文，且没有未解决 issues")
+    all_ok = all(page["status"] == "ok" for page in pages)
+    if (status == "ok") != all_ok:
+        raise ValueError("视觉转录整体状态与逐页状态不一致，不能标为完整")
+    if complete and not all_ok:
+        raise ValueError("视觉转录仍有 partial、empty 或 error 页面，核对并重新转录后再入档")
+
+
+def validate_model_schema(value, receipt=False):
+    version = value.get("extraction_schema_version" if receipt else "schema_version")
+    tool = value.get("extraction_tool" if receipt else "tool")
+    warnings = value.get("extraction_warnings" if receipt else "warnings")
+    if (type(version) is not int or version != 1 or tool != "family-doctor-model-vision"
+            or value.get("extraction_method") != "model_vision"
+            or value.get("coverage_basis") != "local_manifest" or not string_list(warnings)):
+        raise ValueError("视觉转录缺少完整的版本、工具、提取方法、覆盖依据或警示信息")
+
+
+def inspect_model_source(path, digest):
+    inspected = visual_inspector()(path, max_bytes=MAX_BYTES, max_pages=MAX_MODEL_PAGES)
+    if inspected["source"]["sha256"] != digest:
+        raise ValueError("视觉转录校验期间原文件内容发生变化")
+    return inspected
+
+
+def model_metadata(extraction):
+    return {"extraction_method": "model_vision", "extraction_tool": extraction["tool"],
+            "extraction_schema_version": extraction["schema_version"],
+            "coverage_basis": extraction["coverage_basis"], "extraction_warnings": copy.deepcopy(extraction["warnings"])}
+
+
 def validate_record(record, record_id):
     if not isinstance(record, dict) or record.get("id") != record_id:
         raise ValueError("导入记录不存在或结构错误")
@@ -87,6 +166,9 @@ def validate_record(record, record_id):
         if key in record and str(uuid.UUID(record[key])) != record[key]:
             raise ValueError("文档关联编号无效")
     validate_pages(record.get("pages"), record.get("page_count"))
+    if has_model_vision(record):
+        validate_model_schema(record, receipt=True)
+        validate_model_pages(record["pages"], record.get("page_count"), record.get("extraction_status"))
     return record
 
 
@@ -134,6 +216,8 @@ def validated_fields(fields, pages):
         if confidence is not None and (isinstance(confidence, bool) or
                 not isinstance(confidence, (int, float)) or not 0 <= confidence <= 100):
             raise ValueError("confidence 应在 0–100 之间，或为 null")
+        if page.get("extraction_method") == "model_vision" and confidence is not None:
+            raise ValueError("模型视觉转录字段的 confidence 应为 null，不能编造 OCR 置信度")
         item["confirmation_status"] = "pending"
         result.append(item)
     return result
@@ -162,10 +246,22 @@ def prepare_stage(args):
             or extraction["source"].get("sha256") != digest):
         raise ValueError("提取结果的 SHA256 与原文件不一致")
     pages = validate_pages(extraction.get("pages"), extraction.get("page_count"))
+    if has_model_vision(extraction):
+        validate_model_schema(extraction)
+        inspected = inspect_model_source(source, digest)
+        if (not isinstance(extraction["source"].get("path"), str)
+                or not extraction["source"]["path"].strip()
+                or type(extraction["source"].get("size_bytes")) is not int
+                or extraction["source"]["size_bytes"] != inspected["source"]["size_bytes"]):
+            raise ValueError("视觉转录原件来源信息不完整或文件大小不一致")
+        validate_model_pages(pages, extraction.get("page_count"), extraction.get("status"), inspected["page_count"])
     fields = validated_fields(load_json(Path(args.fields_json)), pages) if args.fields_json else []
     metadata = document_metadata(getattr(args, "title", None), getattr(args, "document_date", None))
     suffix = source.suffix.lower()
-    if suffix not in {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".txt"}:
+    supported = {".pdf", ".png", ".jpg", ".jpeg", ".tif", ".tiff", ".webp", ".txt"}
+    if has_model_vision(extraction) and inspected["kind"] == "image":
+        supported.update({".bmp", ".gif"})
+    if suffix not in supported:
         raise ValueError("不支持此原文件扩展名")
     return source, content, digest, extraction, pages, fields, suffix, metadata
 
@@ -182,6 +278,8 @@ def _stage(args, prepared):
                         "metadata": metadata, "fields": fields, "pages": pages,
                         "page_count": extraction.get("page_count", len(pages)),
                         "extraction_status": extraction.get("status", "unknown")}
+    if has_model_vision(extraction):
+        fingerprint_data.update(model_metadata(extraction))
     fingerprint = hashlib.sha256(json.dumps(fingerprint_data, sort_keys=True, ensure_ascii=False).encode()).hexdigest()
     if request_id is not None:
         if not isinstance(request_id, str) or not request_id.strip() or len(request_id) > 2000:
@@ -227,6 +325,8 @@ def _stage(args, prepared):
               "page_count": extraction.get("page_count", len(pages)),
               "fields": fields}
     record.update(metadata)
+    if has_model_vision(extraction):
+        record.update(model_metadata(extraction))
     if request_key:
         record.update(request_key=request_key, content_fingerprint=fingerprint)
     attribute_record(record, getattr(args, "role", None))
@@ -296,8 +396,13 @@ def validate_published(category, entry, record=None):
     if (category not in DOCUMENT_TYPES or entry.get("status") != "confirmed" or entry.get("role") != "self"
             or not isinstance(entry.get("confirmed_at"), str) or not entry["confirmed_at"].strip()):
         raise ValueError("已发布索引的来源或确认信息不一致，请先检查档案")
-    verify_raw(entry)
-    validated_fields(entry.get("fields"), canonical_pages(entry, record))
+    raw = verify_raw(entry)
+    pages = canonical_pages(entry, record)
+    if has_model_vision(entry):
+        validate_model_schema(entry, receipt=True)
+        validate_model_pages(pages, entry.get("page_count"), entry.get("extraction_status"),
+                             inspect_model_source(raw, entry["sha256"])["page_count"], complete=True)
+    validated_fields(entry.get("fields"), pages)
     if any(field.get("confirmation_status") != "confirmed" or field.get("source_record") != entry["id"]
            or field.get("confirmed_at") != entry["confirmed_at"] or field.get("confirmed_by") != "user"
            for field in entry["fields"]):
@@ -464,7 +569,10 @@ def confirm(args):
         if record.get("extraction_status") != "ok":
             raise ValueError("存在提取失败或缺失页面，请重新提取并核对后再入档")
         validate_pages(record["pages"], record.get("page_count"), complete=True)
-        verify_raw(record)
+        raw = verify_raw(record)
+        if has_model_vision(record):
+            validate_model_pages(record["pages"], record.get("page_count"), record.get("extraction_status"),
+                                 inspect_model_source(raw, record["sha256"])["page_count"], complete=True)
         profile_path = stored_path("user-profile.json")
         published = published_entry(load_json(profile_path, default={"records": {}}), record)
         if published:
@@ -489,6 +597,9 @@ def confirm(args):
         entry.update(fields=fields, confirmed_at=confirmed_at, role="self", status="confirmed")
         entry.update(document_metadata(record.get("title"), record.get("document_date")))
         entry["source_pages"] = copy.deepcopy(record["pages"])
+        if has_model_vision(record):
+            entry.update({key: copy.deepcopy(record[key]) for key in MODEL_METADATA_KEYS})
+            entry.update(page_count=record["page_count"], extraction_status=record["extraction_status"])
         # The uploader and the person who checked a document can be different.
         for key in record_context():
             if key in record:

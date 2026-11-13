@@ -19,7 +19,11 @@ python3 doctor.py check --role self
 
 ## 2. 可选文件功能
 
-推荐使用独立虚拟环境；核心功能不需要执行本节。
+附件识别按材料与当前宿主能力选择方式：纯文字 PDF 可以提取文本；扫描件和图片优先使用当前模型的视觉能力，但前提是它本轮确实收到目标原图或完整页面。模型只见到文件名、路径、缩略图或文本提取结果时，不能声称已读完扫描页。宿主不具备视觉能力、无法把图片交给模型，或识别仍受限时，再用本地 OCR 补充相应页面/字段。
+
+这是 Hermes 技能工作流，不新增模型服务，也不自动探测模型能力或保证宿主会传入完整页面。宿主辅助视觉模型返回的描述不能当作当前模型已收到原图，本流程也不会修改宿主已有附件路由。识别来源、页码和未覆盖部分需要明确记录，模型输出仍须核对。用户要求完全离线时，保持现有隐私边界，使用已配置的本地视觉模型或本地 OCR；不能为了优先模型识别而调用云端。详细规则见[附件识别规范](skills/family-doctor/references/attachment-recognition.md)。
+
+下面是本地文本提取、OCR 后备和报告导出的可选依赖。推荐使用独立虚拟环境；核心功能不需要执行本节。当前模型已经能够读取目标图片时，不必先运行 OCR 才能开始转录。
 
 ```sh
 python3 -m venv .venv
@@ -27,7 +31,9 @@ python3 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-`pypdf` 用于 PDF 文本层解析，`weasyprint` 用于报告渲染。Python 直接依赖版本已固定；系统库和字体由操作系统提供。已有 PyPDF2 仅作为兼容后备，不是新安装推荐路径。
+`pypdf` 用于 PDF 文本层解析，`weasyprint` 用于报告渲染，这两项版本已固定。Pillow 用于模型识别前的图片解码、真实帧数检查与逐页预览，安装器根据 Python 版本选择兼容版本；系统库和字体由操作系统提供。已有 PyPDF2 仅作为兼容后备，不是新安装推荐路径。
+
+模型转录可以使用 `python skills/pdf-text-extract/visual.py prepare 原文件 --output-dir 新的私人目录` 生成来源清单、真实页数和预览；当前模型查看页面并填写转录模板后，再用 `assemble` 组装入档结果。普通图片需要 Pillow；PDF 还需要 `pypdf` 与 Poppler 的 `pdftoppm`。这两个命令不调用模型或 OCR、不安装依赖、不改变宿主图片路由。完整示例见[附件识别规范](skills/family-doctor/references/attachment-recognition.md)。
 
 PDF 报告需要 Pango 等系统渲染库和可显示中文的字体。按 [WeasyPrint 官方安装说明](https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation) 安装对应平台依赖。macOS 可使用 Homebrew 提供的 Pango；受系统保护的 Python 可能无法读取动态库环境变量，建议使用独立 Python 及虚拟环境。缺依赖时导出会明确失败并返回非零，不会产生伪 PDF。
 
@@ -39,7 +45,7 @@ python skills/family-doctor/scripts/generate_health_report.py --role self --pdf
 python skills/family-doctor/scripts/generate_health_report.py --role self --pdf-only --output /path/to/report.pdf
 ```
 
-图片 OCR 需要 Node.js 18+，推荐使用已验证的 Node 22。扫描 PDF 另需 Poppler 的 `pdftoppm`。
+需要本地 OCR 后备时，图片 OCR 使用 Node.js 18+，推荐使用已验证的 Node 22。将扫描 PDF 页面交给本地 OCR 还需 Poppler 的 `pdftoppm`。
 
 ```sh
 npm ci --ignore-scripts --prefix skills/ocr-local
@@ -48,7 +54,7 @@ node skills/ocr-local/scripts/ocr.js /path/to/image.png --json
 python skills/pdf-text-extract/tool.py /path/to/report.pdf --ocr --json -o /path/to/extraction.json
 ```
 
-`--ocr` 仅处理没有可读文本的页面；页面有部分文本层但仍含扫描表格时，核对后可使用 `--ocr-all`。OCR 默认可能下载语言资源，图片本身在本地处理。完全离线所需的语言文件和 `--offline` 参数见 `skills/ocr-local/README.md`。提取结果含敏感原文，保存路径也应放在私人目录。
+以上是显式 OCR 后备命令，不会自行探测当前模型的视觉能力。`--ocr` 仅处理没有可读文本的页面；页面有部分文本层但仍含扫描表格时，不能把文本提取成功当作整页已识别，确需 OCR 补充时可使用 `--ocr-all`。OCR 默认可能下载语言资源，图片本身在本地处理。完全离线所需的语言文件和 `--offline` 参数见 `skills/ocr-local/README.md`。模型转录和 OCR 都须保留对应原件、页码与文字，再核对字段；识别受限时保持待核对，不承诺无遗漏。提取结果含敏感原文，保存路径应放在私人目录。
 
 ## 3. Agent 宿主接入
 
